@@ -11,10 +11,20 @@ const server = app.listen(9000)
 
 const peerServer = ExpressPeerServer(server, {
   path: '/',
-  key: 'someid',
+  ssl: {
+    key: './server.key',
+    cert: './server.cert',
+  },
 })
 
 app.use('/myapp', peerServer)
+
+peerServer.on('connection', (client) => {
+  // console.log('client', client)
+
+  console.log('Client connected:', client.id)
+  client.send('Hello from server!')
+})
 
 // == OR ==
 

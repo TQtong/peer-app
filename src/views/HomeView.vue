@@ -22,7 +22,11 @@ import { reactive, useTemplateRef, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { Peer } from 'peerjs'
 
-const peer = new Peer(null, {})
+const peer = new Peer('myapp', {
+  host: 'localhost',
+  port: 9000,
+  path: '/myapp',
+})
 
 peer.on('open', (id) => {
   console.log('My peer ID is: ' + id)
@@ -87,6 +91,14 @@ peer.on('call', function (call) {
       otherVideo.value.srcObject = remoteStream
       otherVideo.value.autoplay = true
     }
+  })
+})
+
+peer.on('connection', function (conn) {
+  debugger
+  conn.on('data', function (data) {
+    debugger
+    console.log('Received', data)
   })
 })
 </script>
