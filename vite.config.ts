@@ -8,7 +8,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), basicSsl()],
+  plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -16,6 +16,6 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    https: true,
+    // https: true,
   },
 })
