@@ -16,7 +16,6 @@ const peerServer = ExpressPeerServer(server, {
     key: fs.readFileSync('./localhost-key.pem'),
     cert: fs.readFileSync('./localhost.pem'),
   },
-  proxied: true,
 })
 
 app.use('/myapp', peerServer)
