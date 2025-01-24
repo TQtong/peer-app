@@ -1,29 +1,37 @@
-import { Socket } from "socket.io";
-import { v4 as uuidv4 } from "uuid";
+import { Socket } from 'socket.io'
+import { v4 as uuidv4 } from 'uuid'
 
 interface IPeer {
-  id: string
+  peerId: string
   name: string
 }
 
 interface IRoom {
   roomId: string
-  users: IPeer[]
+  users: IPeer
 }
 
-const roomList:IRoom[] = []
+let roomList: IRoom[] = []
 
 export const roomHandler = (socket: Socket) => {
   // create room
-  socket.on("createRoom", () => {
+  socket.on('createRoom', () => {
     const roomId = uuidv4()
-    socket.emit("roomCreated", roomId)
+    socket.emit('roomCreated', roomId)
   })
 
   // join room
-  socket.on("joinRoom", (room: IRoom) => {
-    console.log(`User ${socket.id} joined room ${room.roomId}`);
+  socket.on('joinRoom', (room: IRoom) => {
     roomList.push(room)
     socket.join(room.roomId)
+    socket.emit('userJoined', {...room.users, length: roomList.length})
+    
+
+    // disconnect
+    socket.on('disconnect', () => {
+      roomList = roomList.filter((targetRoom) => targetRoom.roomId !== room.roomId)
+      socket.to(room.roomId).emit('user-disconnected', room)
+      console.log('user is disconnected', roomList.length)
+    })
   })
 }

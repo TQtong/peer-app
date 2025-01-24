@@ -20,7 +20,6 @@ const handleClick = () => {
 }
 
 window.scoket.on('roomCreated', (roomId) => {
-  console.log(roomId);
   roomStroe.setRoomId(roomId)
 })
 
