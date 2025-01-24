@@ -11,6 +11,8 @@ const roomStore = useRoomStore()
 
 const roomId = roomStore.getRoomId
 
+window.scoket.emit('joinRoom', roomId)
+
 </script>
 
 <style scoped lang="scss">

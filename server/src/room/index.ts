@@ -5,7 +5,11 @@ export const roomHandler = (socket: Socket) => {
   // create room
   socket.on("createRoom", () => {
     const roomId = uuidv4()
-    socket.join(roomId)
     socket.emit("roomCreated", roomId)
+  })
+
+  socket.on("joinRoom", (roomId: string) => {
+    console.log(`User ${socket.id} joined room ${roomId}`);
+    socket.join(roomId)
   })
 }
