@@ -12,19 +12,14 @@ import { v4 as uuidv4 } from 'uuid'
 
 import VideoView from './VideoView.vue'
 
-import { useRoomStore } from '@/stores/room'
+import { useUserStore } from '@/stores/user'
 import useReducer from '@/hooks/useReducer'
 import { peerReducer } from '@/hooks/peerReducer'
 import { addPeerAction, removePeerAction } from '@/hooks/peerActions'
 
-interface IUser {
-  peerId: string
-  name: string
-  instantiate: Peer,
-  length?: 0
-}
+import { type IUser } from '@/interfaces/user'
 
-const roomStore = useRoomStore()
+const roomStore = useUserStore()
 
 const roomId = roomStore.getCurrentRoomId
 const peerId = uuidv4()
@@ -33,9 +28,11 @@ const myVideo = useTemplateRef<HTMLVideoElement>('myVideo')
 const peer = new Peer(peerId)
 
 const user: IUser = {
+  roomId: roomId,
   peerId: peerId,
   name: 'test',
   instantiate: peer,
+  status: true
 }
 
 const [state, dispatch] = useReducer(peerReducer, {})

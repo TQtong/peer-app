@@ -10,10 +10,10 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
-import { useRoomStore } from '@/stores/room'
+import { useUserStore } from '@/stores/user'
 
 const roomId = ref()
-const roomStroe = useRoomStore()
+const roomStroe = useUserStore()
 
 const handleClick = () => {
   window.scoket.emit('createRoom')

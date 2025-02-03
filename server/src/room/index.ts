@@ -17,6 +17,7 @@ export const roomHandler = (socket: Socket) => {
   // create room
   socket.on('createRoom', () => {
     const roomId = uuidv4()
+    console.log(roomId)
     socket.emit('roomCreated', roomId)
   })
 
@@ -25,7 +26,7 @@ export const roomHandler = (socket: Socket) => {
     roomList.push(room)
     socket.join(room.roomId)
     socket.emit('userJoined', {...room.users, length: roomList.length})
-    
+
 
     // disconnect
     socket.on('disconnect', () => {
