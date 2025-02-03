@@ -2,7 +2,9 @@
   <el-container id="default-layout">
     <el-aside width="200px">
       <div v-for="item in users" :key="item.roomId">
-        {{ item.name }}{{ item.status === false ? 'offline' : 'online' }}
+        <h1 class="title">{{ item.name }}</h1>
+        <div class="status" :class="{ 'offline': item.status === false, 'online': item.status === true }">{{ item.status === false ? 'offline' : 'online' }}</div>
+        <el-button type="primary" @click="item.status = !item.status">Change Status</el-button>
       </div>
     </el-aside>
     <el-main>
@@ -20,8 +22,6 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 
 const users = computed(() => {
-  console.log(userStore.getUserList);
-  debugger
   return userStore.getUserList
 })
 
@@ -32,5 +32,21 @@ onMounted(() => {})
 #default-layout {
   width: 100%;
   height: 100%;
+
+  .title {
+    font-weight: bold;
+  }
+
+  .status {
+    font-size: 12px
+  }
+}
+
+.offline {
+  color: red;
+}
+
+.online {
+  color: green;
 }
 </style>

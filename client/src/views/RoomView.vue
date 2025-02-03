@@ -1,6 +1,6 @@
 <template>
   <div id="room">
-    <h1>This is room id: {{ roomId }}</h1>
+    <h1>This is room id: {{ userId }}</h1>
     <VideoView :stream="localStream" />
   </div>
 </template>
@@ -19,32 +19,31 @@ import { addPeerAction, removePeerAction } from '@/hooks/peerActions'
 
 import { type IUser } from '@/interfaces/user'
 
-const roomStore = useUserStore()
+const userStore = useUserStore()
 
-const roomId = roomStore.getCurrentRoomId
+const userId = userStore.getCurrentRoomId
 const peerId = uuidv4()
 const myVideo = useTemplateRef<HTMLVideoElement>('myVideo')
 
 const peer = new Peer(peerId)
 
 const user: IUser = {
-  roomId: roomId,
+  roomId: userId,
   peerId: peerId,
   name: 'test',
   instantiate: peer,
-  status: true
+  status: true,
 }
 
 const [state, dispatch] = useReducer(peerReducer, {})
 
-roomStore.setUser(user)
+userStore.setUser(user)
 
 window.scoket.emit('joinRoom', {
-  roomId,
-  users: {
-    peerId: user.peerId,
-    name: user.name,
-  },
+  userId,
+  peerId: user.peerId,
+  name: user.name,
+  status: user.status,
 })
 
 const localStream = ref<MediaStream>()
@@ -57,12 +56,21 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) 
 })
 
 window.scoket.on('userJoined', (user: IUser) => {
-  // console.log(user)
+  console.log(user)
+  debugger
   // console.log(roomStore.roomList)
-
   // if (localStream.value && peer) {
   //   debugger
   // }
+})
+
+window.scoket.on('addUsers', (users: IUser[]) => {
+  users.forEach((user) => {
+    const result = userStore.userList.find((item) => item.peerId === user.peerId)
+    if (!result) {
+      userStore.addUser(user)
+    }
+  })
 })
 
 peer.on('call', function (call) {

@@ -35,6 +35,12 @@ export const useUserStore = defineStore('user', {
       this.currentUser.peerId = user.peerId
       this.currentUser.name = user.name
       this.currentUser.instantiate = user.instantiate
+    },
+    addUser(user: IUser) {
+      this.userList.push(user)
+    },
+    removeUser(user: IUser) {
+      this.userList = this.userList.filter((room) => room.roomId !== user.roomId)
     }
   },
 })

@@ -1,17 +1,15 @@
 import { Socket } from 'socket.io'
 import { v4 as uuidv4 } from 'uuid'
 
-interface IPeer {
+
+interface IUser {
+  roomId: string
   peerId: string
   name: string
+  status: boolean
 }
 
-interface IRoom {
-  roomId: string
-  users: IPeer
-}
-
-let roomList: IRoom[] = []
+let roomList: IUser[] = []
 
 export const roomHandler = (socket: Socket) => {
   // create room
@@ -22,11 +20,12 @@ export const roomHandler = (socket: Socket) => {
   })
 
   // join room
-  socket.on('joinRoom', (room: IRoom) => {
+  socket.on('joinRoom', (room: IUser) => {
     roomList.push(room)
     socket.join(room.roomId)
-    socket.emit('userJoined', {...room.users, length: roomList.length})
-
+    socket.emit('userJoined', room)
+    console.log('user is connected', roomList.length)
+    socket.emit('addUsers', roomList)
 
     // disconnect
     socket.on('disconnect', () => {
