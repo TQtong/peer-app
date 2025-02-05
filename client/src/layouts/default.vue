@@ -1,10 +1,11 @@
 <template>
   <el-container id="default-layout">
     <el-aside width="200px">
-      <div v-for="item in users" :key="item.roomId">
+      <div v-for="item in users" :key="item.userId">
         <h1 class="title">{{ item.name }}</h1>
+        <h1 class="title">{{ item.peerId }}</h1>
         <div class="status" :class="{ 'offline': item.status === false, 'online': item.status === true }">{{ item.status === false ? 'offline' : 'online' }}</div>
-        <el-button type="primary" @click="item.status = !item.status">Change Status</el-button>
+        <el-button type="primary" @click="handleCall(item.peerId)">Call</el-button>
       </div>
     </el-aside>
     <el-main>
@@ -24,6 +25,16 @@ const userStore = useUserStore()
 const users = computed(() => {
   return userStore.getUserList
 })
+
+const handleCall = (peerId: string) => {
+  const currentUser = userStore.currentUser
+  const stream = userStore.localStream
+  const call = currentUser.instantiate?.call(peerId, stream as MediaStream)
+
+  call?.on('stream', function (peerStream) {
+    userStore.otherStream = peerStream
+  })
+}
 
 onMounted(() => {})
 </script>
