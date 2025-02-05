@@ -27,11 +27,19 @@ export const roomHandler = (socket: Socket) => {
     console.log('user is connected', roomList.length)
     socket.emit('addUsers', roomList)
 
-    // disconnect
+    // disconnect(leave room)
     socket.on('disconnect', () => {
       roomList = roomList.filter((targetRoom) => targetRoom.userId !== room.userId)
       socket.to(room.userId).emit('user-disconnected', room)
       console.log('user is disconnected', roomList.length)
     })
+  })
+
+  socket.on('start-sharing', (peerId:string, userId: string) => {
+    socket.emit('user-started-sharing', peerId)
+  })
+
+  socket.on('stop-sharing', (userId: string) => {
+    socket.emit('user-stopped-sharing')
   })
 }

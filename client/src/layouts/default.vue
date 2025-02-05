@@ -4,8 +4,15 @@
       <div v-for="item in users" :key="item.userId">
         <h1 class="title">{{ item.name }}</h1>
         <h1 class="title">{{ item.peerId }}</h1>
-        <div class="status" :class="{ 'offline': item.status === false, 'online': item.status === true }">{{ item.status === false ? 'offline' : 'online' }}</div>
+        <div
+          class="status"
+          :class="{ offline: item.status === false, online: item.status === true }"
+        >
+          {{ item.status === false ? 'offline' : 'online' }}
+        </div>
         <el-button type="primary" @click="handleCall(item.peerId)">Call</el-button>
+        <el-button type="primary" @click="handleVideo(item.peerId, item.userId)">Video</el-button>
+        <el-button type="primary" @click="handleScreen(item.peerId, item.userId)">Screen</el-button>
       </div>
     </el-aside>
     <el-main>
@@ -36,6 +43,37 @@ const handleCall = (peerId: string) => {
   })
 }
 
+const handleScreen = (peerId: string, userId:string) => {
+  navigator.mediaDevices.getDisplayMedia({}).then((stream) => {
+    userStore.setLocalStream(stream)
+    reserConnection()
+    window.scoket.emit('start-sharing',...[peerId, userId])
+  })
+}
+
+const handleVideo = (peerId: string, userId:string) => {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+    userStore.setLocalStream(stream)
+    reserConnection()
+    window.scoket.emit('stop-sharing', userId)
+  })
+  // handleCall(peerId)
+  
+}
+
+//todo: this function just replace video track, need to replace screen track
+const reserConnection = () => {
+  const currentUser = userStore.currentUser
+  const stream = userStore.localStream
+
+  Object.values(currentUser.instantiate?.connections).forEach((connection) => {
+    
+    const videoTrack = stream?.getTracks().find((track) => track.kind === 'video')
+
+    connection[0].peerConnection.getSenders()[0].replaceTrack(videoTrack)
+  })
+}
+
 onMounted(() => {})
 </script>
 
@@ -49,7 +87,7 @@ onMounted(() => {})
   }
 
   .status {
-    font-size: 12px
+    font-size: 12px;
   }
 }
 
