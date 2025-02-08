@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <el-input :value="userId" />
+    <el-input v-model="userId" />
     <el-button @click="handleClick">
       <RouterLink to="/room">create room</RouterLink>
     </el-button>

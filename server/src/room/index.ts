@@ -35,11 +35,11 @@ export const roomHandler = (socket: Socket) => {
     })
   })
 
-  socket.on('start-sharing', (peerId:string, userId: string) => {
+  socket.on('start-sharing', (peerId:string) => {
     socket.emit('user-started-sharing', peerId)
   })
 
-  socket.on('stop-sharing', (userId: string) => {
+  socket.on('stop-sharing', () => {
     socket.emit('user-stopped-sharing')
   })
 }
